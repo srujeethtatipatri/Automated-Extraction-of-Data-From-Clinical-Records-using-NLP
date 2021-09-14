@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Python Flask Bucket List App</title>
+
+
+    <!-- <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+
+    <!-- <link rel="stylesheet" href="{{url_for('static', filename= 'css/text.css')}}"> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400">
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/materialize.min.css">
+    <link rel="stylesheet" href="static/css/tooplate.css">
+</head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            type: 'GET',
+            url: '/trainspellcheck'
+        }).success(function(result, textStatus, jqXHR) {
+            console.log(result);
+        }).fail(function(data) {
+            alert('error while training!');
+        });
+
+
+
+        $('#result').hide();
+        $('.container .img').hide();
+        $('#upload-button').on('click', function(event) {
+            event.preventDefault();
+            debugger;
+            var form_data = new FormData(document.getElementById("upload-form"));
+            $.ajax({
+                type: 'POST',
+                url: '/pdf2image',
+                data: form_data,
+                contentType: false,
+                processData: false,
+                dataType: 'json'
+            }).success(function(result, textStatus, jqXHR) {
+                console.log(result);
+                console.log(textStatus);
+                console.log(jqXHR);
+                console.log('Success!');
+                document.getElementById('org-image').src = 'data:;base64,' + result['image'];
+                $('#result').hide();
+                $('.container .img').show();
+
+            }).fail(function(data) {
+                alert('error!');
+            });
+        });
+
+        $('#extract').on('click', function(event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'GET',
+                url: '/extract'
+            }).success(function(result, textStatus, jqXHR) {
+                console.log(result);
+                console.log(textStatus);
+                console.log(jqXHR);
+                console.log('Success!');
+                document.getElementById('result').innerHTML = result['text'];
+                $('#result').show();
+                $('.container .img').hide();
+
+            }).fail(function(data) {
+                alert('error while extracting!');
+            });
+        });
+
+        $('#spellcheck').on('click', function(event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'GET',
+                url: '/spellchecker'
+            }).success(function(result, textStatus, jqXHR) {
+                console.log(result);
+                console.log(textStatus);
+                console.log(jqXHR);
+                console.log('Success!');
+                document.getElementById('result').innerHTML = result['text'];
+                $('#result').show();
+                $('.container .img').hide();
+
+            }).fail(function(data) {
+                alert('error while extracting!');
+            });
+        });
+
+        $('#summarize').on('click', function(event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'GET',
+                url: '/summarize'
+            }).success(function(result, textStatus, jqXHR) {
+                console.log(result);
+                console.log(textStatus);
+                console.log(jqXHR);
+                console.log('Success!');
+                document.getElementById('result').innerHTML = result['text'];
+                $('#result').show();
+                $('.container .img').hide();
+
+            }).fail(function(data) {
+                alert('error while extracting!');
+            });
+        });
+    });
+</script>
+
+
+
+<body id="login">
+    <div class="container">
+        <div class="row tm-register-row">
+            <div class="col-lg-4 tm-register-col-l">
+
+                <div class="input-field">
+                    <form id="upload-form">
+                        <div class="form-group mb-2 col-xl-6 col-lg-6 col-md-6 col-12 pr-0 tm-form-group-2-col tm-form-group-2-col-r">
+                            <input id="file-picker" type="file" name="file">
+                        </div>
+                        <!-- <input type="submit" value="Upload!" id="upload-button" class="waves-effect btn-large btn-large-white px-4 black-text" wfd-id="13"> -->
+
+
+
+                        <!-- <button type="submit" value="Upload!" id="upload-button" class="waves-effect btn-large btn-large-white px-4 black-text">
+                                    UPLOAD
+                                </button> -->
+                        <div class="text-left mt-4" wfd-id="13">
+                            <button type="submit" value="UPLOAD" id="upload-button" style="width:150px !important" class="waves-effect btn-large btn-large-white px-4 black-text" wfd-id="10">
+                                        UPLOAD
+                                </button>
+                        </div>
+                    </form>
+                    <!-- <input id="first_name" name="first_name" type="text" class="validate"> -->
+                </div>
+
+
+                <div class="text-left mt-4">
+                    <button type="submit" class="waves-effect btn-large btn-large-white px-4 black-text" style="width:150px !important" id="extract">
+                            EXTRACT
+                    </button>
+                </div>
+                <div class="text-left mt-4">
+                    <button type="submit" class="waves-effect btn-large btn-large-white px-4 black-text" style="width:150px !important" id="spellcheck">
+                            SPELLCHECK
+                    </button>
+                </div>
+                <div class="text-left mt-4">
+                    <button type="submit" class="waves-effect btn-large btn-large-white px-4 black-text" style="width:150px !important" id="summarize">
+                            SUMMARIZE
+                    </button>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="img" style="display:none">
+                    <img id="org-image" class="org-img" style="max-height:100%;max-width:100%" />
+                </div>
+                <div id="result" style="display:none" style="background-color:black;">
+
+                </div>
+                <!-- <header class="mb-5">
+                    <h3 class="mt-0 text-white">REGISTER Yourself</h3>
+                    <p class="grey-text">Aenean tincidunt, enim nec blandit lobortis, ante enim ultrices eros, et laoreet augue libero id nunc. Proin semper feugiat ultrices.</p>
+                    <p class="grey-text">Aenean a efficitur magna, sed dignissim odio. Praesent pretium lectus ac nunc ultrices, ac volutpat orci viverra.
+                    </p>
+                </header> -->
+
+            </div>
+        </div>
+
+    </div>
+
+</body>
+<div class="modal">
+    <!-- Place at bottom of page -->
+</div>
+
+</html>
